@@ -1,0 +1,9 @@
+{
+  "version": "0.1.31",
+  "hardware": "esp32s3-n16r8",
+  "channel": "explore",
+  "url": "https://raw.githubusercontent.com/spw-audio-lab/sparrow-ota/main/channels/explore/airplay2-receiver.bin",
+  "sha256": "2631f7ce56bd2364ef2992113e75dc107815e61103ff78a0448140e8c8d4d6e4",
+  "size": 2217472,
+  "notes": "SPARROW explore 0.1.31"
+}
