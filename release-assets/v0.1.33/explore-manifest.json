@@ -2,7 +2,7 @@
   "version": "0.1.33",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://raw.githubusercontent.com/spw-audio-lab/sparrow-ota/main/channels/explore/airplay2-receiver.bin",
+  "url": "https://github.com/spw-audio-lab/sparrow-ota/releases/download/v0.1.33/explore-airplay2-receiver.bin",
   "sha256": "f07f1a48ccd1fc14aaa2ef783d45fc7f516fe0aca52ae578fdea8f5d789acf54",
   "size": 2548720,
   "notes": "管理页面已嵌入固件；一次 OTA 同时更新程序和网页，并优化更新检查与 LED 呼吸提示。"
