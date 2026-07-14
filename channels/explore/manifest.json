@@ -2,7 +2,7 @@
   "version": "0.1.41",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@main/channels/explore/airplay2-receiver.bin",
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.41/channels/explore/airplay2-receiver.bin",
   "sha256": "bae736776f07c4f056f6f2e55d8bffee25138bd0088b37e00de7fb3436438d14",
   "size": 2562432,
   "date": "2026-07-15",
