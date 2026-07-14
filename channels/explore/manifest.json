@@ -1,10 +1,10 @@
 {
-  "version": "0.1.43",
+  "version": "0.1.44",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.43/channels/explore/airplay2-receiver.bin",
-  "sha256": "835b4d21581547c73a7b25759ccab14bb1763ffb3ee77994ede2c3f6124fb01e",
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.44/channels/explore/airplay2-receiver.bin",
+  "sha256": "7d3a5cfc47e683db32308bbe5ab0d1371d9a1c6daa9044ebdc2ba07988565da2",
   "size": 2563664,
-  "date": "2026-07-15",
-  "notes": "发布日期：2026-07-15。更新检查改为单次不可变版本探测，2.2 秒硬超时；无新版时立即返回，不再串行访问多个节点。"
+  "date": "",
+  "notes": "修复固件升级页面语言变量错误，并将前端检查等待上限同步为 3 秒。"
 }
