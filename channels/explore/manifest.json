@@ -1,10 +1,10 @@
 {
-  "version": "0.1.42",
+  "version": "0.1.43",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.42/channels/explore/airplay2-receiver.bin",
-  "sha256": "47c8abc78145d04092e62d33d905543aca52a3e8a1a97351ccac6309fa752d20",
-  "size": 2563632,
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.43/channels/explore/airplay2-receiver.bin",
+  "sha256": "835b4d21581547c73a7b25759ccab14bb1763ffb3ee77994ede2c3f6124fb01e",
+  "size": 2563664,
   "date": "2026-07-15",
-  "notes": "发布日期：2026-07-15。OTA 更新检查改用不可变版本标签，彻底规避 CDN 旧清单回退；低于当前版本的清单不再触发提示或安装。"
+  "notes": "发布日期：2026-07-15。更新检查改为单次不可变版本探测，2.2 秒硬超时；无新版时立即返回，不再串行访问多个节点。"
 }
