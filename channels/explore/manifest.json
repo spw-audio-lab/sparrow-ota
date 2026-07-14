@@ -1,10 +1,10 @@
 {
-  "version": "0.1.44",
+  "version": "0.1.45",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.44/channels/explore/airplay2-receiver.bin",
-  "sha256": "7d3a5cfc47e683db32308bbe5ab0d1371d9a1c6daa9044ebdc2ba07988565da2",
-  "size": 2563664,
-  "date": "",
-  "notes": "修复固件升级页面语言变量错误，并将前端检查等待上限同步为 3 秒。"
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.45/channels/explore/airplay2-receiver.bin",
+  "sha256": "59ba9094fcdf7bb93ad0bd16997fc6a293bddd592cd657713dd38e3f16312d7b",
+  "size": 2564848,
+  "date": "2026-07-15",
+  "notes": "在线升级改为先在预留内存中完整下载并校验，再顺序写入 Flash，减少网络与写入互相阻塞，显著缩短固件下载等待。"
 }
