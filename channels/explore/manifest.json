@@ -1,10 +1,10 @@
 {
-  "version": "0.1.41",
+  "version": "0.1.42",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.41/channels/explore/airplay2-receiver.bin",
-  "sha256": "bae736776f07c4f056f6f2e55d8bffee25138bd0088b37e00de7fb3436438d14",
-  "size": 2562432,
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.42/channels/explore/airplay2-receiver.bin",
+  "sha256": "47c8abc78145d04092e62d33d905543aca52a3e8a1a97351ccac6309fa752d20",
+  "size": 2563632,
   "date": "2026-07-15",
-  "notes": "发布日期：2026-07-15。新增 OTA 发布日期显示；将网络接收窗口提升至 8 KB、下载流块提升至 32 KB，并增加实时下载速度统计。"
+  "notes": "发布日期：2026-07-15。OTA 更新检查改用不可变版本标签，彻底规避 CDN 旧清单回退；低于当前版本的清单不再触发提示或安装。"
 }
