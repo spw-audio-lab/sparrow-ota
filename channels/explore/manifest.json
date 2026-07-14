@@ -1,9 +1,9 @@
 {
-  "version": "0.1.34",
+  "version": "0.1.40",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://raw.githubusercontent.com/spw-audio-lab/sparrow-ota/main/channels/explore/airplay2-receiver.bin",
-  "sha256": "2324c0cef666bcf7734ab159ee66f021dab0cacbd2657c262e7dbc34d9c569fb",
-  "size": 2551472,
-  "notes": "重新设计固件升级流程：显示当前版本和更新渠道，检查后展示新版、大小与更新日志；移除清单 URL，仅发现新版后才允许升级。"
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@main/channels/explore/airplay2-receiver.bin",
+  "sha256": "90a30d1c2ad699c7d95d7999888da034da81250f5dfa6ce7f04f4b2876ba9ec8",
+  "size": 2561808,
+  "notes": "修复手动检查更新偶发无法启动的问题：OTA 工作任务改为开机预留的常驻静态 worker；同时加入音频 PSRAM 共享池，减少 AirPlay 与 DLNA 切换时的大块内存碎片。"
 }
