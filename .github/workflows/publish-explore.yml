@@ -40,10 +40,14 @@ jobs:
         shell: bash
         run: |
           tag="${{ steps.release.outputs.tag }}"
+          notes="$(jq -r '.notes' channels/explore/manifest.json)"
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" explore-manifest.json explore-airplay2-receiver.bin --clobber
+            gh release edit "$tag" \
+              --title "SPARROW Explore ${{ steps.release.outputs.version }}" \
+              --notes "$notes"
           else
             gh release create "$tag" explore-manifest.json explore-airplay2-receiver.bin \
               --title "SPARROW Explore ${{ steps.release.outputs.version }}" \
-              --notes "Explore channel OTA release ${{ steps.release.outputs.version }}."
+              --notes "$notes"
           fi
