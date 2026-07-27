@@ -4,27 +4,100 @@ on:
   push:
     branches: [main]
     paths:
-      - channels/explore/**
       - release-assets/**/explore-manifest.json
-      - .github/workflows/publish-explore.yml
   workflow_dispatch:
+    inputs:
+      action:
+        description: Prepare files, or promote them after the observation period
+        required: true
+        default: promote
+        type: choice
+        options:
+          - prepare
+          - promote
+      version:
+        description: Explore version to publish, without the leading v
+        required: true
+        type: string
 
 permissions:
   contents: write
+
+concurrency:
+  group: publish-explore
+  cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Read release version
+      - name: Resolve staged release
         id: release
         shell: bash
         run: |
-          version=$(jq -r '.version' channels/explore/manifest.json)
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            action="${{ inputs.action }}"
+            version="${{ inputs.version }}"
+            candidate="release-assets/v${version}/explore-manifest.json"
+          else
+            action="prepare"
+            mapfile -t candidates < <(
+              git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" |
+                grep -E '^release-assets/v[^/]+/explore-manifest\.json$' || true
+            )
+            if [[ "${#candidates[@]}" -ne 1 ]]; then
+              echo "Expected exactly one staged Explore manifest, found ${#candidates[@]}." >&2
+              exit 1
+            fi
+            candidate="${candidates[0]}"
+            version="$(jq -r '.version' "$candidate")"
+          fi
+
+          if [[ ! -f "$candidate" ]]; then
+            echo "Staged manifest does not exist: $candidate" >&2
+            exit 1
+          fi
+          if [[ "$candidate" != "release-assets/v${version}/explore-manifest.json" ]]; then
+            echo "Staged manifest path and version do not match." >&2
+            exit 1
+          fi
+          if [[ "$(jq -r '.channel' "$candidate")" != "explore" ]]; then
+            echo "Staged manifest is not for the Explore channel." >&2
+            exit 1
+          fi
+
+          echo "action=$action" >> "$GITHUB_OUTPUT"
+          echo "candidate=$candidate" >> "$GITHUB_OUTPUT"
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Validate staged binary and manifest
+        shell: bash
+        run: |
+          candidate="${{ steps.release.outputs.candidate }}"
+          binary="channels/explore/airplay2-receiver.bin"
+          expected_sha256="$(jq -r '.sha256' "$candidate")"
+          expected_size="$(jq -r '.size' "$candidate")"
+          expected_url="https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${{ steps.release.outputs.tag }}/channels/explore/airplay2-receiver.bin"
+          actual_sha256="$(sha256sum "$binary" | awk '{print $1}')"
+          actual_size="$(stat -c '%s' "$binary")"
+
+          [[ "$actual_sha256" == "$expected_sha256" ]] || {
+            echo "Staged binary SHA-256 does not match the manifest." >&2
+            exit 1
+          }
+          [[ "$actual_size" == "$expected_size" ]] || {
+            echo "Staged binary size does not match the manifest." >&2
+            exit 1
+          }
+          [[ "$(jq -r '.url' "$candidate")" == "$expected_url" ]] || {
+            echo "Staged manifest URL is not the immutable tagged URL." >&2
+            exit 1
+          }
 
       - name: Prepare release assets
         shell: bash
@@ -32,22 +105,135 @@ jobs:
           cp channels/explore/airplay2-receiver.bin explore-airplay2-receiver.bin
           release_url="https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.release.outputs.tag }}/explore-airplay2-receiver.bin"
           jq --arg url "$release_url" '.url = $url' \
-            channels/explore/manifest.json > explore-manifest.json
+            "${{ steps.release.outputs.candidate }}" > explore-manifest.json
 
-      - name: Publish release
+      - name: Prepare immutable release
+        if: steps.release.outputs.action == 'prepare'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           tag="${{ steps.release.outputs.tag }}"
-          notes="$(jq -r '.notes' channels/explore/manifest.json)"
+          notes="$(jq -r '.notes' "${{ steps.release.outputs.candidate }}")"
           if gh release view "$tag" >/dev/null 2>&1; then
+            is_draft="$(gh release view "$tag" --json isDraft --jq '.isDraft')"
+            if [[ "$is_draft" != "true" ]]; then
+              echo "Refusing to overwrite an already published release: $tag" >&2
+              exit 1
+            fi
             gh release upload "$tag" explore-manifest.json explore-airplay2-receiver.bin --clobber
             gh release edit "$tag" \
               --title "SPARROW Explore ${{ steps.release.outputs.version }}" \
-              --notes "$notes"
+              --notes "$notes" \
+              --draft
           else
             gh release create "$tag" explore-manifest.json explore-airplay2-receiver.bin \
               --title "SPARROW Explore ${{ steps.release.outputs.version }}" \
-              --notes "$notes"
+              --notes "$notes" \
+              --draft \
+              --target "$GITHUB_SHA"
           fi
+
+          if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null 2>&1; then
+            git tag "$tag" "$GITHUB_SHA"
+            git push origin "refs/tags/$tag"
+          fi
+
+      - name: Pre-warm and verify immutable binary
+        shell: bash
+        run: |
+          expected_sha256="$(jq -r '.sha256' "${{ steps.release.outputs.candidate }}")"
+          tag="${{ steps.release.outputs.tag }}"
+          routes=(
+            "https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${tag}/channels/explore/airplay2-receiver.bin"
+            "https://testingcf.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${tag}/channels/explore/airplay2-receiver.bin"
+            "https://gcore.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${tag}/channels/explore/airplay2-receiver.bin"
+            "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${tag}/channels/explore/airplay2-receiver.bin"
+          )
+
+          for route_index in "${!routes[@]}"; do
+            route="${routes[$route_index]}"
+            matched=false
+            for attempt in $(seq 1 18); do
+              rm -f immutable.bin
+              curl --fail --silent --show-error --location --max-time 60 \
+                "${route}?cb=${GITHUB_SHA}-${attempt}" -o immutable.bin || true
+              if [[ -f immutable.bin &&
+                    "$(sha256sum immutable.bin | awk '{print $1}')" == "$expected_sha256" ]]; then
+                matched=true
+                break
+              fi
+              sleep 5
+            done
+            if [[ "$matched" != true ]]; then
+              echo "Download route $route_index is not ready; current channel was not changed." >&2
+              exit 1
+            fi
+          done
+
+      - name: Publish prepared GitHub release
+        if: steps.release.outputs.action == 'promote'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="${{ steps.release.outputs.tag }}"
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            echo "Prepared release does not exist: $tag" >&2
+            exit 1
+          fi
+          gh release edit "$tag" --draft=false
+
+      - name: Promote verified manifest
+        if: steps.release.outputs.action == 'promote'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase origin main
+          cp "${{ steps.release.outputs.candidate }}" channels/explore/manifest.json
+          git add channels/explore/manifest.json
+          if git diff --cached --quiet; then
+            echo "Explore manifest is already promoted."
+          else
+            git commit -m "release: promote Explore ${{ steps.release.outputs.version }} manifest [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: Refresh mutable manifest cache
+        if: steps.release.outputs.action == 'promote'
+        shell: bash
+        run: |
+          curl --fail --silent --show-error --retry 3 \
+            "https://purge.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/channels/explore/manifest.json"
+
+      - name: Verify public update routes
+        if: steps.release.outputs.action == 'promote'
+        shell: bash
+        run: |
+          expected_release_id="$(jq -r '.release_id' "${{ steps.release.outputs.candidate }}")"
+          expected_sha256="$(jq -r '.sha256' "${{ steps.release.outputs.candidate }}")"
+          routes=(
+            "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/channels/explore/manifest.json"
+            "https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/channels/explore/manifest.json"
+          )
+
+          for route in "${routes[@]}"; do
+            matched=false
+            for attempt in $(seq 1 12); do
+              payload="$(curl --fail --silent --show-error --location \
+                --max-time 15 "${route}?cb=${GITHUB_SHA}-${attempt}")"
+              release_id="$(jq -r '.release_id // 0' <<<"$payload")"
+              sha256="$(jq -r '.sha256 // ""' <<<"$payload")"
+              if [[ "$release_id" == "$expected_release_id" &&
+                    "$sha256" == "$expected_sha256" ]]; then
+                matched=true
+                break
+              fi
+              sleep 5
+            done
+            if [[ "$matched" != true ]]; then
+              echo "Public manifest route is stale: $route" >&2
+              exit 1
+            fi
+          done
