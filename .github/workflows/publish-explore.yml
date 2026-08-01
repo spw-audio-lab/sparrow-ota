@@ -107,6 +107,27 @@ jobs:
           jq --arg url "$release_url" '.url = $url' \
             "${{ steps.release.outputs.candidate }}" > explore-manifest.json
 
+      - name: Configure R2 credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.R2_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          aws-region: auto
+
+      - name: Upload immutable binary to R2
+        env:
+          R2_ENDPOINT: https://${{ vars.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          R2_BUCKET: ${{ vars.R2_BUCKET_NAME }}
+          VERSION: ${{ steps.release.outputs.version }}
+        shell: bash
+        run: |
+          object="releases/v${VERSION}/channels/explore/airplay2-receiver.bin"
+          aws s3 cp channels/explore/airplay2-receiver.bin \
+            "s3://${R2_BUCKET}/${object}" \
+            --endpoint-url "$R2_ENDPOINT" \
+            --content-type application/octet-stream \
+            --cache-control 'public, max-age=31536000, immutable'
+
       - name: Prepare immutable release
         if: steps.release.outputs.action == 'prepare'
         env:
@@ -145,6 +166,7 @@ jobs:
           expected_sha256="$(jq -r '.sha256' "${{ steps.release.outputs.candidate }}")"
           tag="${{ steps.release.outputs.tag }}"
           routes=(
+            "${{ vars.R2_PUBLIC_BASE_URL }}/releases/${tag}/channels/explore/airplay2-receiver.bin"
             "https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${tag}/channels/explore/airplay2-receiver.bin"
             "https://testingcf.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${tag}/channels/explore/airplay2-receiver.bin"
             "https://gcore.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${tag}/channels/explore/airplay2-receiver.bin"
@@ -200,6 +222,19 @@ jobs:
             git push origin HEAD:main
           fi
 
+      - name: Publish current manifest to R2
+        if: steps.release.outputs.action == 'promote'
+        env:
+          R2_ENDPOINT: https://${{ vars.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          R2_BUCKET: ${{ vars.R2_BUCKET_NAME }}
+        shell: bash
+        run: |
+          aws s3 cp "${{ steps.release.outputs.candidate }}" \
+            "s3://${R2_BUCKET}/channels/explore/manifest.json" \
+            --endpoint-url "$R2_ENDPOINT" \
+            --content-type application/json \
+            --cache-control 'no-cache, max-age=0, must-revalidate'
+
       - name: Refresh mutable manifest cache
         if: steps.release.outputs.action == 'promote'
         shell: bash
@@ -216,6 +251,7 @@ jobs:
           routes=(
             "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/main/channels/explore/manifest.json"
             "https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@main/channels/explore/manifest.json"
+            "${{ vars.R2_PUBLIC_BASE_URL }}/channels/explore/manifest.json"
           )
 
           for route in "${routes[@]}"; do
