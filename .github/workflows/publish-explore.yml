@@ -112,17 +112,36 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
+          AWS_EC2_METADATA_DISABLED: true
           R2_ENDPOINT: https://${{ vars.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
           R2_BUCKET: ${{ vars.R2_BUCKET_NAME }}
           VERSION: ${{ steps.release.outputs.version }}
         shell: bash
         run: |
           object="releases/v${VERSION}/channels/explore/airplay2-receiver.bin"
-          aws s3 cp channels/explore/airplay2-receiver.bin \
-            "s3://${R2_BUCKET}/${object}" \
+          expected_size="$(stat -c '%s' channels/explore/airplay2-receiver.bin)"
+
+          aws s3api put-object \
+            --bucket "$R2_BUCKET" \
+            --key "$object" \
+            --body channels/explore/airplay2-receiver.bin \
             --endpoint-url "$R2_ENDPOINT" \
             --content-type application/octet-stream \
-            --cache-control 'public, max-age=31536000, immutable'
+            --cache-control 'public, max-age=31536000, immutable' \
+            --no-cli-pager >/dev/null
+
+          actual_size="$(aws s3api head-object \
+            --bucket "$R2_BUCKET" \
+            --key "$object" \
+            --endpoint-url "$R2_ENDPOINT" \
+            --query ContentLength \
+            --output text \
+            --no-cli-pager)"
+          if [[ "$actual_size" != "$expected_size" ]]; then
+            echo "R2 object verification failed for $object: expected $expected_size bytes, got $actual_size." >&2
+            exit 1
+          fi
+          echo "R2 object verified: $object ($actual_size bytes)."
 
       - name: Prepare immutable release
         if: steps.release.outputs.action == 'prepare'
@@ -224,15 +243,35 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
+          AWS_EC2_METADATA_DISABLED: true
           R2_ENDPOINT: https://${{ vars.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
           R2_BUCKET: ${{ vars.R2_BUCKET_NAME }}
         shell: bash
         run: |
-          aws s3 cp "${{ steps.release.outputs.candidate }}" \
-            "s3://${R2_BUCKET}/channels/explore/manifest.json" \
+          manifest="${{ steps.release.outputs.candidate }}"
+          object="channels/explore/manifest.json"
+          expected_size="$(stat -c '%s' "$manifest")"
+
+          aws s3api put-object \
+            --bucket "$R2_BUCKET" \
+            --key "$object" \
+            --body "$manifest" \
             --endpoint-url "$R2_ENDPOINT" \
             --content-type application/json \
-            --cache-control 'no-cache, max-age=0, must-revalidate'
+            --cache-control 'no-cache, max-age=0, must-revalidate' \
+            --no-cli-pager >/dev/null
+
+          actual_size="$(aws s3api head-object \
+            --bucket "$R2_BUCKET" \
+            --key "$object" \
+            --endpoint-url "$R2_ENDPOINT" \
+            --query ContentLength \
+            --output text \
+            --no-cli-pager)"
+          if [[ "$actual_size" != "$expected_size" ]]; then
+            echo "R2 manifest verification failed: expected $expected_size bytes, got $actual_size." >&2
+            exit 1
+          fi
 
       - name: Refresh mutable manifest cache
         if: steps.release.outputs.action == 'promote'
