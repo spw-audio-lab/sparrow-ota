@@ -85,6 +85,12 @@ jobs:
           expected_url="https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@${{ steps.release.outputs.tag }}/channels/explore/airplay2-receiver.bin"
           actual_sha256="$(sha256sum "$binary" | awk '{print $1}')"
           actual_size="$(stat -c '%s' "$binary")"
+          manifest_size="$(stat -c '%s' "$candidate")"
+
+          [[ "$manifest_size" -le 4095 ]] || {
+            echo "Staged manifest is too large for existing devices: $manifest_size bytes (maximum 4095)." >&2
+            exit 1
+          }
 
           [[ "$actual_sha256" == "$expected_sha256" ]] || {
             echo "Staged binary SHA-256 does not match the manifest." >&2
