@@ -1,0 +1,38 @@
+{
+  "release_id": 1786053300,
+  "version": "0.1.74",
+  "hardware": "esp32s3-n16r8",
+  "channel": "explore",
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.1.74/channels/explore/airplay2-receiver.bin",
+  "sha256": "9804302658a7215d3828c268557626eace593c28eb610487b3d341d9e9d33926",
+  "size": 2310848,
+  "date": "2026-08-07",
+  "notes": "改善 AirPlay 全屋播放的持续同步表现，减少与 HomePod 等设备播放一段时间后逐渐产生的偏差；新增可选的桌面音乐兼容入口，改善部分 Windows Apple Music 的连接与播放；统一 AirPlay、DLNA、网络电台和 Roon 的播放接管与释放逻辑；音箱待机管理新增 20 Hz、19,995 Hz 和 20,100 Hz 三档保活选择；同步诊断可分别显示实时流与缓冲流状态。",
+  "changelog": [
+    {
+      "version": "0.1.74",
+      "date": "2026-08-07",
+      "notes": "改善 AirPlay 全屋播放的持续同步表现，减少与 HomePod 等设备播放一段时间后逐渐产生的偏差；新增可选的桌面音乐兼容入口，改善部分 Windows Apple Music 的连接与播放；统一 AirPlay、DLNA、网络电台和 Roon 的播放接管与释放逻辑；音箱待机管理新增 20 Hz、19,995 Hz 和 20,100 Hz 三档保活选择；同步诊断可分别显示实时流与缓冲流状态。"
+    },
+    {
+      "version": "0.1.73",
+      "date": "2026-08-05",
+      "notes": "改善 Mac、Windows 与手机之间的 AirPlay 连接和切换体验；光纤输出可根据音源适配常见采样率，并在后台显示当前输出状态；音箱待机管理新增低频与高频保活选择，以适配不同类型的有源音箱；进一步改善 DLNA 缓存音乐播放及多种播放服务共存时的稳定性。"
+    },
+    {
+      "version": "0.1.72",
+      "date": "2026-08-05",
+      "notes": "改善 AirPlay 全屋播放的持续同步表现，减少播放一段时间后逐渐产生的时间偏差；全屋声场微调现在支持完整的正负范围，调整后可立即生效并在暂停、切歌或重新连接后继续保留。AirPlay 设备图标选项精简为 HomePod 与 HomePod mini。"
+    },
+    {
+      "version": "0.1.71",
+      "date": "2026-08-03",
+      "notes": "改善安卓手机通过 DLNA 播放本地缓存音乐时的格式兼容性，减少无法播放或出现数字噪声的情况；DLNA、电台及 Roon 播放期间继续保持 AirPlay 可发现，方便在不同播放方式之间切换。"
+    },
+    {
+      "version": "0.1.70",
+      "date": "2026-08-02",
+      "notes": "修复关闭 SPDIF 光纤输出、切换回 3.5mm 模拟输出时，少数情况下可能提示操作超时的问题；异常切换可及时恢复，正常播放不受影响。"
+    }
+  ]
+}
