@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - release-assets/**/explore-manifest.json
+      - release-assets/**/explore-promote.json
   workflow_dispatch:
     inputs:
       action:
@@ -44,17 +45,34 @@ jobs:
             version="${{ inputs.version }}"
             candidate="release-assets/v${version}/explore-manifest.json"
           else
-            action="prepare"
+            mapfile -t promote_markers < <(
+              git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" |
+                grep -E '^release-assets/v[^/]+/explore-promote\.json$' || true
+            )
             mapfile -t candidates < <(
               git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA" |
                 grep -E '^release-assets/v[^/]+/explore-manifest\.json$' || true
             )
-            if [[ "${#candidates[@]}" -ne 1 ]]; then
+
+            if [[ "${#promote_markers[@]}" -eq 1 && "${#candidates[@]}" -eq 0 ]]; then
+              action="promote"
+              marker="${promote_markers[0]}"
+              version="$(jq -r '.version' "$marker")"
+              candidate="release-assets/v${version}/explore-manifest.json"
+              if [[ "$(jq -r '.channel' "$marker")" != "explore" ||
+                    "$(jq -r '.action' "$marker")" != "promote" ||
+                    "$marker" != "release-assets/v${version}/explore-promote.json" ]]; then
+                echo "Invalid Explore promotion marker: $marker" >&2
+                exit 1
+              fi
+            elif [[ "${#promote_markers[@]}" -eq 0 && "${#candidates[@]}" -eq 1 ]]; then
+              action="prepare"
+              candidate="${candidates[0]}"
+              version="$(jq -r '.version' "$candidate")"
+            else
               echo "Expected exactly one staged Explore manifest, found ${#candidates[@]}." >&2
               exit 1
             fi
-            candidate="${candidates[0]}"
-            version="$(jq -r '.version' "$candidate")"
           fi
 
           if [[ ! -f "$candidate" ]]; then
