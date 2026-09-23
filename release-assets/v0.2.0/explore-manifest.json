@@ -1,0 +1,33 @@
+{
+  "release_id": 1790183565,
+  "version": "0.2.0",
+  "hardware": "esp32s3-n16r8",
+  "channel": "explore",
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.2.0/channels/explore/airplay2-receiver.bin",
+  "sha256": "afd1092c017e46729e10e3516e04d9b174532d37852a159b7fa0346f3ccc2180",
+  "size": 2446032,
+  "date": "2026-09-24",
+  "notes": "较大幅度整合播放资源与音频路径管理，改善 AUX、光纤与 DLNA 播放时的资源规划；修复 Android Sparrow Connector 在已有 AirPlay 2 会话时接入失败的问题。已认证的新会话可接管 Event Channel，并在真正的音频流 SETUP 后再切换播放源，同时保留普通 Apple AirPlay、DLNA 与光纤路径的既有行为。",
+  "changelog": [
+    {
+      "version": "0.2.0",
+      "date": "2026-09-24",
+      "notes": "较大幅度整合播放资源与音频路径管理，改善 AUX、光纤与 DLNA 播放时的资源规划；修复 Android Sparrow Connector 在已有 AirPlay 2 会话时接入失败的问题。已认证的新会话可接管 Event Channel，并在真正的音频流 SETUP 后再切换播放源，同时保留普通 Apple AirPlay、DLNA 与光纤路径的既有行为。"
+    },
+    {
+      "version": "0.1.80",
+      "date": "2026-08-29",
+      "notes": "改善 AUX-DLNA 高码率音乐的连续播放稳定性，减少播放过程中周期性短暂瑕疵；优化后台诊断对音频输出的影响，保持暂停、切歌和播放控制正常。"
+    },
+    {
+      "version": "0.1.79",
+      "date": "2026-08-21",
+      "notes": "重点改善光纤数字输出和 DLNA 连续播放的稳定性：减少高清音源播放时偶发的雪花声、停顿与无声，改善暂停、恢复、切歌及网络重新缓冲；修复自动换曲后偶发静音并停在暂停状态、需要再次切歌才能恢复的问题，同时延续改善对 Emby 等媒体来源和常见音频格式的兼容性。"
+    },
+    {
+      "version": "0.1.78",
+      "date": "2026-08-14",
+      "notes": "修复部分手机通过 DLNA 连续播放时，一首歌曲自然结束后停住、未能自动播放下一首的问题；自动续播现在以设备的实际播放完成状态为准，减少不同音频文件时长标记差异带来的影响。继续改善 M4A、FLAC、MP3 和 AAC 的切歌、拖动进度及播放状态同步稳定性。"
+    }
+  ]
+}
