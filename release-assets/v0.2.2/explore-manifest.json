@@ -7,12 +7,12 @@
   "sha256": "878f065c3fcb537dacd60f85cdc10d5656ed80dc110de3d86ac0da299a6654ff",
   "size": 2451296,
   "date": "2026-09-27",
-  "notes": "高码率播放更稳，连接切换更顺畅\n\nAirPlay\n- 优化 Sparrow Connector 的 80 ms 与 160 ms 播放节奏。\n- 改善 AUX 和光纤输出的丢包恢复与连续播放表现。\n\nDLNA\n- 优化 192 kHz / 24-bit FLAC 的解码与网络缓冲，减少高码率播放卡顿。\n- 保留 24-bit 音源位深，让音乐细节得到更完整呈现。",
+  "notes": "AirPlay\n\n- 优化 Sparrow Connector 的双模式体验，兼顾迅捷响应与稳定播放。\n- 改善 AUX 与光纤输出的连续性，减少播放中的短暂停顿。\n- 完善起播与丢包恢复，让音乐衔接更自然。\n\nDLNA\n\n- 优化高码率 FLAC 的读取与解码，提升连续播放稳定性。\n- 支持 192 kHz / 24-bit FLAC 播放。\n- 保留音源原生 24-bit 位深，让动态与细节更完整。",
   "changelog": [
     {
       "version": "0.2.2",
       "date": "2026-09-27",
-      "notes": "高码率播放更稳，连接切换更顺畅\n\nAirPlay\n- 优化 Sparrow Connector 的 80 ms 与 160 ms 播放节奏。\n- 改善 AUX 和光纤输出的丢包恢复与连续播放表现。\n\nDLNA\n- 优化 192 kHz / 24-bit FLAC 的解码与网络缓冲，减少高码率播放卡顿。\n- 保留 24-bit 音源位深，让音乐细节得到更完整呈现。"
+      "notes": "AirPlay\n\n- 优化 Sparrow Connector 的双模式体验，兼顾迅捷响应与稳定播放。\n- 改善 AUX 与光纤输出的连续性，减少播放中的短暂停顿。\n- 完善起播与丢包恢复，让音乐衔接更自然。\n\nDLNA\n\n- 优化高码率 FLAC 的读取与解码，提升连续播放稳定性。\n- 支持 192 kHz / 24-bit FLAC 播放。\n- 保留音源原生 24-bit 位深，让动态与细节更完整。"
     },
     {
       "version": "0.2.1",
