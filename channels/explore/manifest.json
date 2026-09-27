@@ -1,14 +1,19 @@
 {
-  "release_id": 1790438532,
-  "version": "0.2.1",
+  "release_id": 1790470643,
+  "version": "0.2.2",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.2.1/channels/explore/airplay2-receiver.bin",
-  "sha256": "a4965692061e936e698f865427cca127fec5787593fe4bbbb9fd2559836e5c83",
-  "size": 2447440,
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.2.2/channels/explore/airplay2-receiver.bin",
+  "sha256": "878f065c3fcb537dacd60f85cdc10d5656ed80dc110de3d86ac0da299a6654ff",
+  "size": 2451296,
   "date": "2026-09-27",
-  "notes": "管理更可靠，AirPlay 连接更顺畅\n\n网络设置\n- 修复重置 Wi-Fi 后配置热点管理页面无法访问的问题。\n\nAirPlay\n- 完善 Sparrow Connector 的 80 ms / 160 ms 延迟模式协商。\n- 优化 AUX 输出 ALAC 处理与丢包恢复，提升播放连续性。",
+  "notes": "AirPlay\n\n- 优化 Sparrow Connector 的双模式体验，兼顾迅捷响应与稳定播放。\n- 改善 AUX 与光纤输出的连续性，减少播放中的短暂停顿。\n- 完善起播与丢包恢复，让音乐衔接更自然。\n\nDLNA\n\n- 优化高码率 FLAC 的读取与解码，提升连续播放稳定性。\n- 支持 192 kHz / 24-bit FLAC 播放。\n- 保留音源原生 24-bit 位深，让动态与细节更完整。",
   "changelog": [
+    {
+      "version": "0.2.2",
+      "date": "2026-09-27",
+      "notes": "AirPlay\n\n- 优化 Sparrow Connector 的双模式体验，兼顾迅捷响应与稳定播放。\n- 改善 AUX 与光纤输出的连续性，减少播放中的短暂停顿。\n- 完善起播与丢包恢复，让音乐衔接更自然。\n\nDLNA\n\n- 优化高码率 FLAC 的读取与解码，提升连续播放稳定性。\n- 支持 192 kHz / 24-bit FLAC 播放。\n- 保留音源原生 24-bit 位深，让动态与细节更完整。"
+    },
     {
       "version": "0.2.1",
       "date": "2026-09-27",
@@ -38,11 +43,6 @@
       "version": "0.1.77",
       "date": "2026-08-14",
       "notes": "进一步改善手机 DLNA 播放的稳定性：修复部分歌曲拖动进度后长时间静音、播放/暂停失效或多次切歌后才恢复的问题；M4A、FLAC、MP3 和 AAC 共用更可靠的拖动与切歌控制，减少手机进度与实际播放不一致。延续新增的左右声道调节、3.5mm 音频信息与增益设置、电台开机播放、睡眠定时、闹钟和场景，以及焕新的后台管理页面。"
-    },
-    {
-      "version": "0.1.76",
-      "date": "2026-08-14",
-      "notes": "新增左右声道强弱调节和 3.5mm 模拟输出增益；模拟输出页面现可显示当前音源的编码、采样率、位深和声道数。后台管理页面焕新，重新梳理功能布局、操作引导和状态颜色。网络电台新增开机播放、睡眠定时、闹钟与场景，由设备独立执行。同时改善 AirPlay、DLNA、电台和 Roon 的切换、DLNA 异常恢复及长时间运行稳定性；在线更新会自动选择线路，失败后继续尝试其他线路。"
     }
   ]
 }
