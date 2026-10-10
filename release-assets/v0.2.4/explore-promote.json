@@ -1,1 +1,1 @@
-{"channel":"explore","action":"promote","version":"0.2.4"}
+{"channel":"explore","action":"promote","version":"0.2.4","retry_reason":"Reverify public routes after jsDelivr cache refresh"}
