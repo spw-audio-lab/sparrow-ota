@@ -1,14 +1,19 @@
 {
-  "release_id": 1794479192,
-  "version": "0.3.5",
+  "release_id": 1795245018,
+  "version": "0.3.6",
   "hardware": "esp32s3-n16r8",
   "channel": "explore",
-  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.3.5/channels/explore/airplay2-receiver.bin",
-  "sha256": "60d92a876b5ecc62439c9c473391459b5d0eeb87af9376effd4fa3705e0410b7",
-  "size": 2778480,
-  "date": "2026-11-12",
-  "notes": "Explore 0.3.5｜连接更灵活，聆听更从容\n\n新增小米妙播\n\n支持通过小米妙播投放音乐，离线环境下也能畅享本地播放。\n\n新增 Type-C 音频输出\n\n支持连接兼容的 USB 音频设备，为音箱和解码设备提供更多连接选择。\n\n播放体验优化\n\n- 优化 AirPlay 的低延迟与稳定播放体验。\n- 改善音乐起播、连续播放与切换时的流畅度。\n- 完善网络波动和多设备播放时的连接与同步表现。\n\n设备管理\n\n- 新增播放服务选择，按需开启常用的投放方式。\n- 支持连接无密码 Wi-Fi。\n- 优化音频输出选择与后台管理体验。",
+  "url": "https://cdn.jsdelivr.net/gh/spw-audio-lab/sparrow-ota@v0.3.6/channels/explore/airplay2-receiver.bin",
+  "sha256": "3dc52f9760f6daa2176e0093561db4ac66b2e82daf1632c7bac435d7b8cbcc8f",
+  "size": 2799152,
+  "date": "2026-11-21",
+  "notes": "Explore 0.3.6 更新\n\n- 优化小米妙播多设备播放的声音同步。\n- 修复小米妙播多设备播放时音量调节无效的问题。\n- 改善小米妙播断开后重新连接的体验。\n- 优化离线模式下的设备连接。\n- 提升在线和离线模式下 AirPlay 低延迟与少丢帧播放的稳定性。\n- 改善 DLNA 语音播放兼容性。",
   "changelog": [
+    {
+      "version": "0.3.6",
+      "date": "2026-11-21",
+      "notes": "Explore 0.3.6 更新\n\n- 优化小米妙播多设备播放的声音同步。\n- 修复小米妙播多设备播放时音量调节无效的问题。\n- 改善小米妙播断开后重新连接的体验。\n- 优化离线模式下的设备连接。\n- 提升在线和离线模式下 AirPlay 低延迟与少丢帧播放的稳定性。\n- 改善 DLNA 语音播放兼容性。"
+    },
     {
       "version": "0.3.5",
       "date": "2026-11-12",
